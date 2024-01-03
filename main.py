@@ -1,25 +1,41 @@
-from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QWidget
+from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QWidget, QFileDialog, QMessageBox
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 import pandas as pd
 import sys
+
+
 class Aplicacion(QWidget):
     def __init__(self):
         super(Aplicacion, self).__init__()
-        self.loadMovies()
+        #Banderas para saber si se ha cargado el archivo
+        self.file_open = False
         self.initialize()
 
     def initialize(self):
-        self.setGeometry(200,200, 600, 600)
+        self.setGeometry(200, 200, 600, 600)
         self.setWindowTitle("Random Movie Picker")
         self.displayWidgets()
 
     def displayWidgets(self):
-        self.btn = QPushButton(self)
-        self.btn.resize(400, 100)
-        self.btn.move(100, 350)
-        self.btn.setText("Pick a movie!")
-        self.btn.clicked.connect(self.pickMovie)
+        #Definicion de los botones
+        #Boton para elegir una pelicula
+        self.btn_pick = QPushButton(self)
+        self.btn_pick.resize(200, 100)
+        self.btn_pick.move(100, 350)
+        self.btn_pick.setText("Pick a movie!")
+        #Conectamos el boton a la funcion pickMovie
+        self.btn_pick.clicked.connect(self.pickMovie)
 
+        #Boton para cargar el archivo csv
+        self.btn_load = QPushButton(self)
+        self.btn_load.resize(200, 100)
+        self.btn_load.move(350, 350)
+        self.btn_load.setText("Load movies")
+        #Conectamos el boton a la funcion loadMovies
+        self.btn_load.clicked.connect(self.loadMovies)
+
+        #Definicion de los labels
         self.title_label = QLabel(self)
         self.year_label = QLabel(self)
         self.url_label = QLabel(self)
@@ -32,28 +48,34 @@ class Aplicacion(QWidget):
         self.title_label.setWordWrap(True)
 
     def loadMovies(self):
-        file = 'movies.csv'
-        self.movies_df = pd.read_csv(file)
+        #Abrir el archivo csv con los datos de las peliculas
+        file_name = QFileDialog.getOpenFileName(self,"Abrir archivos", "../../", "CSV(*.csv)")
+        if file_name[0] == "":
+            QMessageBox.warning(self, "Advertencia", "No ha seleccionado ningun archivo")
+        else:
+            QMessageBox.information(self, "Datos cargados", "Datos cargados correctamente")
+            self.movies_df = pd.read_csv(file_name[0])
+            self.file_open = True
 
     def pickMovie(self):
-        random_movie = self.movies_df.sample()
-        titulo = random_movie['Name'].iloc[0]
-        ano = int(random_movie['Year'].iloc[0])
-        url = random_movie['Letterboxd URI'].iloc[0]
+        if self.file_open == False:
+            QMessageBox.warning(self, "Advertencia", "No hay datos cargados")
+        else:
+            random_movie = self.movies_df.sample()
+            titulo = random_movie['Name'].iloc[0]
+            ano = int(random_movie['Year'].iloc[0])
+            url = random_movie['Letterboxd URI'].iloc[0]
+            # Actualizar el texto de los labels
+            self.title_label.setText(f"Title: {titulo}")
+            self.title_label.setFont(QFont('Arial', 20))
+            self.year_label.setText(f"Year: {ano}")
+            self.year_label.setFont(QFont('Arial', 20))
+            self.url_label.setText(f"<a href='{url}'>Letterboxd</a>")
+            self.url_label.setFont(QFont('Arial', 20))
+            self.url_label.setOpenExternalLinks(True)
 
-        # Update labels with new movie information
-        self.title_label.setText(f"Title: {titulo}")
-        self.title_label.setFont(QFont('Arial', 20))
-        self.year_label.setText(f"Year: {ano}")
-        self.year_label.setFont(QFont('Arial', 20))
-        self.url_label.setText(f"<a href='{url}'>Letterboxd</a>")
-        self.url_label.setFont(QFont('Arial', 20))
-        self.url_label.setOpenExternalLinks(True)
-
-        # Update button text and position
-        self.btn.setText("Pick another movie!")
-
-
+        # Actualizar el texto del boton
+        self.btn_pick.setText("Pick another movie!")
 
 
 if __name__ == '__main__':
