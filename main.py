@@ -9,7 +9,7 @@ class Aplicacion(QWidget):
         self.initialize()
 
     def initialize(self):
-        self.setGeometry(200,200, 600, 800)
+        self.setGeometry(200,200, 600, 600)
         self.setWindowTitle("Random Movie Picker")
         self.displayWidgets()
 
@@ -26,9 +26,9 @@ class Aplicacion(QWidget):
         self.title_label.resize(600, 200)
         self.year_label.resize(600, 200)
         self.url_label.resize(600, 200)
-        self.title_label.move(100, 50)
-        self.year_label.move(100, 120)
-        self.url_label.move(100, 190)
+        self.title_label.move(50, 50)
+        self.year_label.move(50, 120)
+        self.url_label.move(50, 190)
         self.title_label.setWordWrap(True)
 
     def loadMovies(self):
@@ -51,7 +51,6 @@ class Aplicacion(QWidget):
         self.url_label.setOpenExternalLinks(True)
 
         # Update button text and position
-        self.btn.move(100, 650)
         self.btn.setText("Pick another movie!")
 
 
