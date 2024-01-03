@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QWidget, QFileDialog, QMessageBox, QHBoxLayout, QVBoxLayout
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QIcon
 import pandas as pd
 import sys
 
@@ -15,6 +15,7 @@ class Aplicacion(QWidget):
     def initialize(self):
         self.setGeometry(200, 200, 600, 600)
         self.setWindowTitle("Random Movie Picker")
+        self.setWindowIcon(QIcon("movie.ico"))
         self.displayWidgets()
 
     def displayWidgets(self):
@@ -41,8 +42,11 @@ class Aplicacion(QWidget):
 
         #Definicion de los labels
         self.title_label = QLabel(self)
+        self.title_label.setAlignment(Qt.AlignCenter)
         self.year_label = QLabel(self)
+        self.year_label.setAlignment(Qt.AlignCenter)
         self.url_label = QLabel(self)
+        self.url_label.setAlignment(Qt.AlignCenter)
         self.title_label.resize(600, 200)
         self.year_label.resize(600, 200)
         self.url_label.resize(600, 200)
