@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QWidget, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QWidget, QFileDialog, QMessageBox, QHBoxLayout, QVBoxLayout
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 import pandas as pd
@@ -35,6 +35,10 @@ class Aplicacion(QWidget):
         #Conectamos el boton a la funcion loadMovies
         self.btn_load.clicked.connect(self.loadMovies)
 
+        hlyt_buttons = QHBoxLayout()
+        hlyt_buttons.addWidget(self.btn_pick)
+        hlyt_buttons.addWidget(self.btn_load)
+
         #Definicion de los labels
         self.title_label = QLabel(self)
         self.year_label = QLabel(self)
@@ -46,6 +50,14 @@ class Aplicacion(QWidget):
         self.year_label.move(50, 120)
         self.url_label.move(50, 190)
         self.title_label.setWordWrap(True)
+
+        vlyt_principal = QVBoxLayout()
+        vlyt_principal.addWidget(self.title_label)
+        vlyt_principal.addWidget(self.year_label)
+        vlyt_principal.addWidget(self.url_label)
+        vlyt_principal.addLayout(hlyt_buttons)
+        self.setLayout(vlyt_principal)
+
 
     def loadMovies(self):
         #Abrir el archivo csv con los datos de las peliculas
@@ -73,9 +85,7 @@ class Aplicacion(QWidget):
             self.url_label.setText(f"<a href='{url}'>Letterboxd</a>")
             self.url_label.setFont(QFont('Arial', 20))
             self.url_label.setOpenExternalLinks(True)
-
-        # Actualizar el texto del boton
-        self.btn_pick.setText("Pick another movie!")
+            self.btn_pick.setText("Pick another movie!")
 
 
 if __name__ == '__main__':
