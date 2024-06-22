@@ -1,8 +1,13 @@
 from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QWidget, QFileDialog, QMessageBox, QHBoxLayout, QVBoxLayout
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QIcon
+from PyQt5.QtGui import QFont, QIcon, QPixmap
 import pandas as pd
 import sys
+from  getposter import get_movie_poster
+import requests
+from io import BytesIO
+
+api_key = "YOUR_API_KEY"
 
 
 class Aplicacion(QWidget):
@@ -54,10 +59,14 @@ class Aplicacion(QWidget):
         self.year_label.move(50, 120)
         self.url_label.move(50, 190)
         self.title_label.setWordWrap(True)
+        self.pixmapLabel = QLabel(self)
+        self.pixmapLabel.resize(150, 200)
+        self.pixmapLabel.setAlignment(Qt.AlignCenter)
 
         vlyt_principal = QVBoxLayout()
         vlyt_principal.addWidget(self.title_label)
         vlyt_principal.addWidget(self.year_label)
+        vlyt_principal.addWidget(self.pixmapLabel)
         vlyt_principal.addWidget(self.url_label)
         vlyt_principal.addLayout(hlyt_buttons)
         self.setLayout(vlyt_principal)
@@ -86,6 +95,19 @@ class Aplicacion(QWidget):
             self.title_label.setFont(QFont('Arial', 20))
             self.year_label.setText(f"Year: {ano}")
             self.year_label.setFont(QFont('Arial', 20))
+            # Obtener la URL del póster
+            try:
+                poster_url = get_movie_poster(api_key, titulo)
+                response = requests.get(poster_url)
+                if response.status_code == 200:
+                    image_data = BytesIO(response.content)
+                    pixmap = QPixmap()
+                    pixmap.loadFromData(image_data.getvalue())
+                    self.pixmapLabel.setPixmap(pixmap)
+                    self.pixmapLabel.setScaledContents(True)
+            except:
+                pass
+
             self.url_label.setText(f"<a href='{url}'>Letterboxd</a>")
             self.url_label.setFont(QFont('Arial', 20))
             self.url_label.setOpenExternalLinks(True)
